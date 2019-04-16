@@ -17,6 +17,46 @@ type 't t =
   | Shift_right : 't t * int -> 't t
   | Shift_right_logical : 't t * int -> 't t
 
+let rec pp : type a. a Fmt.t -> a t Fmt.t = fun pp_data ppf -> function
+  | Val x -> pp_data ppf x
+  | Add (a, b) -> Fmt.pf ppf "@[<1>(%a@ +@ %a)@]" (pp pp_data) a (pp pp_data) b
+  | Sub (a, b) -> Fmt.pf ppf "@[<1>(%a@ -@ %a)@]" (pp pp_data) a (pp pp_data) b
+  | Mul (a, b) -> Fmt.pf ppf "@[<1>(%a@ *@ %a)@]" (pp pp_data) a (pp pp_data) b
+  | Div (a, b) -> Fmt.pf ppf "@[<1>(%a@ /@ %a)@]" (pp pp_data) a (pp pp_data) b
+  | Rem (a, b) -> Fmt.pf ppf "@[<1>(%a@ %@ %a)@]" (pp pp_data) a (pp pp_data) b
+  | Neg x -> Fmt.pf ppf "@[<1>(-@ %a)@]" (pp pp_data) x
+  | Abs x -> Fmt.pf ppf "@[<1>(abs@ %a)@]" (pp pp_data) x
+  | Succ x -> Fmt.pf ppf "@[<1>(succ@ %a)@]" (pp pp_data) x
+  | Pred x -> Fmt.pf ppf "@[<1>(pred@ %a)@]" (pp pp_data) x
+  | Logand (a, b) -> Fmt.pf ppf "@[<1>(%a@ &@ %a)@]" (pp pp_data) a (pp pp_data) b
+  | Logor (a, b) -> Fmt.pf ppf "@[<1>(%a@ |@ %a)@]" (pp pp_data) a (pp pp_data) b
+  | Logxor (a, b) -> Fmt.pf ppf "@[<1>(%a@ ^@ %a)@]" (pp pp_data) a (pp pp_data) b
+  | Lognot x -> Fmt.pf ppf "@[<1>(~@ %a)@]" (pp pp_data) x
+  | Shift_left (x, n) -> Fmt.pf ppf "@[<1>(%a@ <<@ %d)@]" (pp pp_data) x n
+  | Shift_right (x, n) -> Fmt.pf ppf "@[<1>(%a@ >>@ %d)@]" (pp pp_data) x n
+  | Shift_right_logical (x, n) -> Fmt.pf ppf "@[<1>(%a@ @>@ %d)@]" (pp pp_data) x n
+
+let rec cast : type a b. (a -> b) -> (b t -> 'r) -> a t -> 'r = fun f k -> function
+  | Val x -> k (Val (f x))
+  | Add (a, b) -> cast f (fun a -> cast f (fun b -> k (Add (a, b))) b) a
+  | Sub (a, b) -> cast f (fun a -> cast f (fun b -> k (Sub (a, b))) b) a
+  | Mul (a, b) -> cast f (fun a -> cast f (fun b -> k (Mul (a, b))) b) a
+  | Div (a, b) -> cast f (fun a -> cast f (fun b -> k (Div (a, b))) b) a
+  | Rem (a, b) -> cast f (fun a -> cast f (fun b -> k (Rem (a, b))) b) a
+  | Logand (a, b) -> cast f (fun a -> cast f (fun b -> k (Logand (a, b))) b) a
+  | Logor (a, b) -> cast f (fun a -> cast f (fun b -> k (Logor (a, b))) b) a
+  | Logxor (a, b) -> cast f (fun a -> cast f (fun b -> k (Logxor (a, b))) b) a
+  | Lognot x -> cast f (fun x -> k (Lognot x)) x
+  | Neg x -> cast f (fun x -> k (Neg x)) x
+  | Succ x -> cast f (fun x -> k (Succ x)) x
+  | Pred x -> cast f (fun x -> k (Pred x)) x
+  | Abs x -> cast f (fun x -> k (Abs x)) x
+  | Shift_left (x, n) -> cast f (fun x -> k (Shift_left (x, n))) x
+  | Shift_right (x, n) -> cast f (fun x -> k (Shift_right (x, n))) x
+  | Shift_right_logical (x, n) -> cast f (fun x -> k (Shift_right_logical (x, n))) x
+
+let cast f t = cast f (fun x -> x) t
+
 module type S = sig
   type t
 
@@ -67,8 +107,6 @@ let binary a b =
   choose [ const (Add (a, b))
          ; const (Sub (a, b))
          ; const (Mul (a, b))
-         ; const (Div (a, b))
-         ; const (Rem (a, b))
          ; const (Logand (a, b))
          ; const (Logor (a, b))
          ; const (Logxor (a, b)) ]
@@ -100,13 +138,15 @@ let gen_x64 = gen Optint_x64.Int_x64_backend.of_int32
 let gen_int32 = gen (fun x -> x)
 
 let () =
-  add_test ~name:"x86" [ gen_x86; gen_int32 ] @@ fun a b ->
+  add_test ~name:"x86" [ gen_int32 ] @@ fun x ->
+  let a = cast Optint_x86.Int_x86_backend.of_int32 x in
   let a = eval (module Optint_x86.Int_x86_backend) Optint_x86.Int_x86_backend.to_int32 a in
-  let b = eval (module Int32) (fun x -> x) b in
+  let b = eval (module Int32) (fun x -> x) x in
   check_eq ~eq:Int32.equal ~pp:Fmt.int32 ~cmp:Int32.compare a b
 
 let () =
-  add_test ~name:"x64" [ gen_x64; gen_int32 ] @@ fun a b ->
+  add_test ~name:"x64" [ gen_int32 ] @@ fun x ->
+  let a = cast Optint_x64.Int_x64_backend.of_int32 x in
   let a = eval (module Optint_x64.Int_x64_backend) Optint_x64.Int_x64_backend.to_int32 a in
-  let b = eval (module Int32) (fun x -> x) b in
+  let b = eval (module Int32) (fun x -> x) x in
   check_eq ~eq:Int32.equal ~pp:Fmt.int32 ~cmp:Int32.compare a b
