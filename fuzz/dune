@@ -1,0 +1,3 @@
+(executable
+ (name fuzz)
+ (libraries fmt optint_x86 optint_x64 crowbar))

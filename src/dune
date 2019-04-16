@@ -7,6 +7,16 @@
             --x64 %{arch_sixtyfour} -o optint)))
 
 (library
- (modules     optint)
- (name        optint)
+ (name optint)
+ (modules optint)
  (public_name optint))
+
+(library
+ (name optint_x64)
+ (modules int_x64_backend)
+ (public_name optint.x64))
+
+(library
+ (name optint_x86)
+ (modules int_x86_backend)
+ (public_name optint.x86))
