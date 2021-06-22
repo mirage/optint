@@ -34,31 +34,37 @@ val mul : int -> int -> int
 
 (*@ r = mul x y
     requires x * y < pow 2 62 && x * y >= - (pow 2 62)
-    ensures r = y * y *)
+    ensures r = x * y *)
 
 val div : int -> int -> int
 (** Integer division. Raise [Division_by_zero] if the second argument is zero.
     this division rounds the real quotient of its arguments towards zero. *)
 
+(*
 (*@ r = div x y
+    requires y <> 0
     (* raises Division_by_zero -> y = 0 *)
     ensures r = x / y *)
+ *)
 
 val rem : int -> int -> int
 (** Integer remainder. If [y] is not zero, the result of [rem x y] satisfies the
     following property: [x = add (mul (div x y) y) (rem x y)]. if [y = 0],
     [rem x y] raises [Division_by_zero]. *)
 
+(*
 (*@ r = rem x y
+    requires y <> 0
     (* raises Division_by_zero -> y = 0 *)
     ensures x = (x / y) * y + (mod x y)
+ *)
  *)
 
 val succ : int -> int
 (** Successor. [succ x] is [add x one]. *)
 
 (*@ x = succ y
-    requires y < pow 2 62
+    requires y < (pow 2 62) - 1
     ensures x = y + 1 *)
 
 val pred : int -> int
@@ -84,33 +90,56 @@ val min_int : int
 val logand : int -> int -> int
 (** Bitwise logical and. *)
 
-(* seems to need some intervention on gospel side
 (*@ r = logand x y
     ensures r = logand x y *)
- *)
 
 val logor : int -> int -> int
 (** Bitwise logical or. *)
 
+(*@ r = logor x y
+    ensures r = logor x y *)
+
 val logxor : int -> int -> int
 (** Bitwise logical exclusive or. *)
+
+(*@ r = logxor x y
+    ensures r = logxor x y *)
 
 val lognot : int -> int
 (** Bitwise logical negation. *)
 
+(*@ r = lognot x
+    ensures r = lognot x *)
+
 val shift_left : int -> int -> int
 (** [shift_left x y] shifts [x] to the left by [y] bits. the result is
     unspecified if [y < 0] or [y >= (32 || 63)]. *)
+
+(*@ r = shift_left x y
+    requires y >= 0 && y < 63
+    ensures r = logand (shift_left x y) ((shift_left 1 63) - 1) *)
 
 val shift_right : int -> int -> int
 (** [shift_right x y] shifts [x] to the right by [y] bits. this is an arithmetic
     shift: the sign bit of [x] is replicated and inserted in the vacated bits.
     the result is unspecified if [y < 0] or [y >= (32 || 63)]. *)
 
+(*
+(*@ r = shift_right x y
+    requires y >= 0 && y < 63
+    ensures r = shift_right x y *)
+ *)
+
 val shift_right_logical : int -> int -> int
 (** [shift_right_logical x y] shifts [x] to the right by [y] bits. this is a
     logical shift: zeroes are inserted in the vacated bits regardless of the
     sign of [x] / the result is unspecified if [y < 0] or [y >= (32 || 63)]. *)
+
+(*
+(*@ r = shift_right_logical x y
+    requires y >= 0 && y < 63
+    ensures r = shift_right_trunc x y *)
+ *)
 
 val of_int : int -> int
 (** Convert the given integer (type [int] ) to {!t}. It's an unsafe function
