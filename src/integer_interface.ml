@@ -158,9 +158,9 @@ module type S = sig
     val ( * ) : t -> t -> t
     val ( % ) : t -> t -> t
     val ( / ) : t -> t -> t
-    val ( && ) : t -> t -> t
-    val ( || ) : t -> t -> t
-    val ( >> ) : t -> int -> t
-    val ( << ) : t -> int -> t
+    val ( land ) : t -> t -> t
+    val ( lor ) : t -> t -> t
+    val ( lsr ) : t -> int -> t
+    val ( lsl ) : t -> int -> t
   end
 end
