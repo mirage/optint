@@ -162,5 +162,14 @@ module type S = sig
     val ( lor ) : t -> t -> t
     val ( lsr ) : t -> int -> t
     val ( lsl ) : t -> int -> t
+
+    val ( && ) : t -> t -> t
+    [@@@ocaml.deprecated "Please use ( land )."]
+    val ( || ) : t -> t -> t
+    [@@@ocaml.deprecated "Please use ( lor )."]
+    val ( >> ) : t -> int -> t
+    [@@@ocaml.deprecated "Please use ( lsr )."]
+    val ( << ) : t -> int -> t
+    [@@@ocaml.deprecated "Please use ( lsl )."]
   end
 end
