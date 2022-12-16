@@ -113,8 +113,14 @@ module Infix = struct
   let ( % ) a b = rem a b
   let ( / ) a b = div a b
 
-  let ( && ) a b = logand a b
-  let ( || ) a b = logor a b
-  let ( >> ) a b = shift_right a b
-  let ( << ) a b = shift_left a b
+  let ( land ) a b = logand a b
+  let ( lor ) a b = logor a b
+  let ( lsr ) a b = shift_right a b
+  let ( lsl ) a b = shift_left a b
+
+  let ( && ) = ( land )
+  let ( || ) = ( lor )
+  let ( >> ) = ( lsr )
+  let ( << ) = ( lsl )
+
 end
