@@ -1,3 +1,9 @@
+### v0.3.0 2022-12-16 Paris (France)
+
+- Add infix operators for bitwise operations (@reynir, #23)
+- Add a deprecation about old infix operators
+  They will be removed at the next minor release
+
 ### v0.2.0 2022-04-08 Paris (France)
 
 - Fix the README.md (@sidkshatriya, #19)
