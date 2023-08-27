@@ -1,0 +1,11 @@
+(executable
+ (name test)
+ (libraries optint alcotest))
+
+(rule
+ (alias runtest)
+ (package optint)
+ (deps
+  (:test test.exe))
+ (action
+  (run %{test} --color=always)))
