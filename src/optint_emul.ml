@@ -1,13 +1,11 @@
-include Int32
-
-external of_int32 : int32 -> t = "%identity"
-external of_unsigned_int32 : int32 -> t = "%identity"
-external to_int32 : t -> int32 = "%identity"
-external to_unsigned_int32 : t -> int32 = "%identity"
+external of_int32 : int32 -> Int32.t = "%identity"
+external of_unsigned_int32 : int32 -> Int32.t = "%identity"
+external to_int32 : Int32.t -> int32 = "%identity"
+external to_unsigned_int32 : Int32.t -> int32 = "%identity"
 
 let to_int64 = Int64.of_int32
 let of_int64 = Int64.to_int32
-let pp ppf (x : t) = Format.fprintf ppf "%ld" x
+let pp ppf (x : Int32.t) = Format.fprintf ppf "%ld" x
 let without_bit_sign (x : int) = if x >= 0 then x else x land lnot 0x40000000
 let invalid_arg fmt = Format.kasprintf invalid_arg fmt
 
@@ -27,27 +25,28 @@ let invalid_arg fmt = Format.kasprintf invalid_arg fmt
  * NOTE: we trust on the two's complement! *)
 
 let to_int x =
-  let max_int = of_int Stdlib.max_int in
-  if compare zero x <= 0 && compare x max_int <= 0 then
-    to_int x (* XXX(dinosaure): positive and can fit into a 31-bit integer. *)
-  else if compare zero x > 0 && Int32.logand 0xC0000000l x = 0xC0000000l then
+  if Int32.compare Int32.zero x <= 0 && Int32.compare x Int32.max_int <= 0 then
+    Int32.to_int
+      x (* XXX(dinosaure): positive and can fit into a 31-bit integer. *)
+  else if
+    Int32.compare Int32.zero x > 0 && Int32.logand 0xC0000000l x = 0xC0000000l
+  then
     let x = Int32.logand x 0x7fffffffl in
-    to_int x
+    Int32.to_int x
   else invalid_arg "Optint.to_int: %lx can not fit into a 31 bits integer" x
 
 let to_unsigned_int x =
-  let max_int = of_int Stdlib.max_int in
-  if compare zero x <= 0 && compare x max_int <= 0 then to_int x
+  let max_int = Int32.of_int Stdlib.max_int in
+  if Int32.compare Int32.zero x <= 0 && Int32.compare x max_int <= 0 then
+    to_int x
   else
     invalid_arg
       "Optint.to_unsigned_int: %lx can not fit into a 31 bits unsigned integer"
       x
 
 let of_unsigned_int x =
-  if x < 0 then logor 0x40000000l (of_int (without_bit_sign x)) else of_int x
-
-let of_int x =
-  if x < 0 then logor 0xC0000000l (of_int (without_bit_sign x)) else of_int x
+  if x < 0 then Int32.logor 0x40000000l (Int32.of_int (without_bit_sign x))
+  else Int32.of_int x
 
 let encoded_size = 4
 
@@ -66,17 +65,23 @@ let decode buf ~off =
   of_int32 t
 
 module Infix = struct
-  let ( + ) a b = add a b
-  let ( - ) a b = sub a b
-  let ( * ) a b = mul a b
-  let ( % ) a b = rem a b
-  let ( / ) a b = div a b
-  let ( land ) a b = logand a b
-  let ( lor ) a b = logor a b
-  let ( lsr ) a b = shift_right a b
-  let ( lsl ) a b = shift_left a b
+  let ( + ) a b = Int32.add a b
+  let ( - ) a b = Int32.sub a b
+  let ( * ) a b = Int32.mul a b
+  let ( % ) a b = Int32.rem a b
+  let ( / ) a b = Int32.div a b
+  let ( land ) a b = Int32.logand a b
+  let ( lor ) a b = Int32.logor a b
+  let ( lsr ) a b = Int32.shift_right a b
+  let ( lsl ) a b = Int32.shift_left a b
   let ( && ) = ( land )
   let ( || ) = ( lor )
   let ( >> ) = ( lsr )
   let ( << ) = ( lsl )
 end
+
+include Int32
+
+let of_int x =
+  if x < 0 then Int32.logor 0xC0000000l (Int32.of_int (without_bit_sign x))
+  else Int32.of_int x
