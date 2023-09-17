@@ -8,8 +8,8 @@ dev-repo:     "git+https://github.com/mirage/optint.git"
 doc:          "https://mirage.github.io/optint/"
 synopsis:     "Efficient integer types on 64-bit architectures"
 description: """
-This library provides two new integer types, `Optint.t` and `Int63.t`, which
-guarantee efficient representation on 64-bit architectures and provide a
+This library provides two new integer types, `Optint.t` and `Optint.Int63.t`,
+which guarantee efficient representation on 64-bit architectures and provide a
 best-effort boxed representation on 32-bit architectures.
 
 Implementation depends on target architecture.
