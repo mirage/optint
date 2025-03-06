@@ -25,3 +25,4 @@ depends: [
   "monolith" {with-test}
   "fmt" {with-test}
 ]
+x-maintenance-intent: [ "(latest)" ]
