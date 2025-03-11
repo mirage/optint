@@ -24,5 +24,6 @@ depends: [
   "crowbar" {with-test & >= "0.2"}
   "monolith" {with-test}
   "fmt" {with-test}
+  "alcotest" {with-test}
 ]
 x-maintenance-intent: [ "(latest)" ]
