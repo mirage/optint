@@ -111,7 +111,10 @@ and eval
     | _ -> Crowbar.bad_test ()
 
 let () =
-  Crowbar.add_test ~name:"computation" Crowbar.[ generate ~of_int:(fun x -> x) ] @@ fun l ->
+  let pp_ops = Fmt.Dump.list (pp_p ~pp_v:Fmt.int) in
+  Crowbar.add_test ~name:"computation"
+    Crowbar.[ with_printer pp_ops (generate ~of_int:(fun x -> x)) ]
+  @@ fun l ->
   (* XXX(dinosaure): FIXME even if it's not used. *)
   if Sys.word_size = 32
   then

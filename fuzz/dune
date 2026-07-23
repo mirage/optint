@@ -3,8 +3,8 @@
  (modules fuzz)
  (libraries fmt crowbar optint))
 
-(alias
- (name runtest)
+(rule
+ (alias runtest)
  (deps (:fuzz fuzz.exe))
  (action (run %{fuzz})))
 
@@ -13,7 +13,7 @@
  (modules fuzz_int63)
  (libraries monolith optint))
 
-(alias
- (name monolith)
+(rule
+ (alias monolith)
  (deps (:fuzz fuzz_int63.exe))
  (action (run %{fuzz})))
