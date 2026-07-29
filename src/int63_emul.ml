@@ -66,12 +66,7 @@ let pred x = sub x one
 let mul x y = Int64.mul x (Conv.unwrap y)
 let div x y =
   let r = Int64.div x y in
-  if Int64.equal r 0x4000_0000_0000_0000L then
-    (* This case happens when we overflow via [ min_int / 1 ], in which case we
-       should wrap back to [ min_int ]. *)
-    min_int
-  else
-    Conv.wrap_modulo r
+  Conv.wrap_modulo r
 
 let lognot x = unset_bottom_bit (Int64.lognot x)
 let logxor x y = unset_bottom_bit (Int64.logxor x y)
