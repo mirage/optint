@@ -10,7 +10,11 @@ let of_int64 = Int64.to_int32
 
 let pp ppf (x:t) = Format.fprintf ppf "%ld" x
 
-let without_bit_sign (x:int) = if x >= 0 then x else x land (lnot 0x40000000)
+(* [0x40000000] does not fit a 31-bit [int], where it is the sign bit; build it
+   from an [int32] so that nothing is truncated at compile time. *)
+let sign_bit = Int32.to_int 0x40000000l
+
+let without_bit_sign (x:int) = if x >= 0 then x else x land (lnot sign_bit)
 
 let invalid_arg fmt = Format.kasprintf invalid_arg fmt
 

@@ -53,11 +53,15 @@ let equal : int -> int -> bool = fun a b -> a = b
 
 let invalid_arg fmt = Format.kasprintf invalid_arg fmt
 
+(* Reached only when [Sys.word_size = 64], so these masks assume an [int] wider
+   than 32 bits: [int32_sign_mask] and the [lsl 32] in [of_int32] are already
+   unspecified on a narrower one. They are computed rather than written as
+   literals so that a 31-bit backend has nothing to truncate. *)
 let uint32_max = (0xffff lsl 16) lor 0xffff
 let int32_sign_maskl = 0x80000000l
 let int32_sign_mask = 1 lsl 31
 let int32_maxl = 0x7fffffffl
-let int32_max = 0x7fffffff
+let int32_max = uint32_max lsr 1
 
 let to_int32 x =
   let truncated = x land uint32_max in
