@@ -57,7 +57,7 @@ let uint32_max = (0xffff lsl 16) lor 0xffff
 let int32_sign_maskl = 0x80000000l
 let int32_sign_mask = 1 lsl 31
 let int32_maxl = 0x7fffffffl
-let int32_max = 0x7fffffff
+let int32_max = uint32_max lsr 1
 
 let to_int32 x =
   let truncated = x land uint32_max in

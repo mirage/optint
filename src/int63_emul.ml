@@ -99,7 +99,9 @@ let to_unsigned_int x =
   then to_int x
   else invalid_arg "Int63.to_unsigned_int: %Lx can not fit into a 31 bits unsigned integer" x
 
-let without_bit_sign (x:int) = if x >= 0 then x else x land (lnot 0x40000000)
+let sign_bit = Int64.to_int 0x40000000L
+
+let without_bit_sign (x:int) = if x >= 0 then x else x land (lnot sign_bit)
 
 let of_unsigned_int x =
   if x < 0
