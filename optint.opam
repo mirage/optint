@@ -1,7 +1,7 @@
 opam-version: "2.0"
 maintainer:   [ "romain.calascibetta@gmail.com" ]
 authors:      "Romain Calascibetta"
-license:      "ISC"
+license:      "MIT"
 homepage:     "https://github.com/mirage/optint"
 bug-reports:  "https://github.com/mirage/optint/issues"
 dev-repo:     "git+https://github.com/mirage/optint.git"
