@@ -1,7 +1,7 @@
 opam-version: "2.0"
 maintainer:   [ "romain.calascibetta@gmail.com" ]
 authors:      "Romain Calascibetta"
-license:      "ISC"
+license:      "MIT"
 homepage:     "https://github.com/mirage/optint"
 bug-reports:  "https://github.com/mirage/optint/issues"
 dev-repo:     "git+https://github.com/mirage/optint.git"
@@ -20,7 +20,7 @@ run-test: [ "dune" "runtest" "-p" name "-j" jobs ]
 
 depends: [
   "ocaml" {>= "4.07.0"}
-  "dune"
+  "dune" {>= "3.17.0"}
   "crowbar" {with-test & >= "0.2"}
   "monolith" {with-test}
   "fmt" {with-test}

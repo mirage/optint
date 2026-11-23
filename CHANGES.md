@@ -1,3 +1,10 @@
+### v0.3.1 2026-11-11 Paris (France)
+
+- Update the README.md and our OPAM description (@reynir, #26)
+- Add `x-maintenance-intent` (@hannesm, #27)
+- Upgrade do dune 3.17 (@samoht, #30)
+- Fix webassembly integration and 31-bits int literals (@samoht, #31)
+
 ### v0.3.0 2022-12-16 Paris (France)
 
 - Add infix operators for bitwise operations (@reynir, #23)
